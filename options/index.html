@@ -124,7 +124,7 @@
                         }
                     ],
                     cartOpen: true,
-                    total: 0,
+                    // total: 0,
                     cart: []
                 }
             },
@@ -148,7 +148,7 @@
 
             watch: {
 
-                cart: {
+                /* cart: {
 
                     handler(cart) {
 
@@ -162,6 +162,18 @@
 
                     deep: true
 
+                } */
+
+            },
+
+            computed: {
+
+                total() {
+                    return this.cart.reduce((prev, curr) => {
+                        const prevPrice = prev.price || prev;
+                        const prevQuantity = prev.quantity || 1;
+                        return prevPrice * prevQuantity + curr.price * curr.quantity;
+                    }, 0);
                 }
 
             }
