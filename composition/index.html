@@ -13,13 +13,13 @@
         <header>
 
             <h3>PlatziCommerce</h3>
-            <button class="cart" @click="cartOpen = !cartOpen">Carro (0)</button>
+            <button class="cart" @click="cartOpen = !cartOpen">Carro ({{ cart.length }})</button>
 
             <div class="cart-content" v-show="cartOpen">
 
                 <div class="cart-content__product" v-for="(product, index) in cart" :key="product.name" :class="{ 'bg-gray': index & 1 }">
                     <img :src="product.images[0].image" :alt="product.name.toUpperCase()">
-                    <span>{{ product.name }} - $ {{ new Intl.NumberFormat("es-MX").format(product.price) }}</span>
+                    <span>{{ product.name }} - $ {{ new Intl.NumberFormat("es-MX").format(product.price) }} {{ product.quantity }}</span>
                 </div>
 
             </div>
@@ -63,10 +63,10 @@
                 <div class="discount">
                     <span>Código de Descuento</span>
                     <input type="text" placeholder="Ingresa tu código" 
-                    @keyup.enter="product.price *= 50 / 100">
+                    @keyup.enter="applyDiscount($event)">
                 </div>
 
-                <button :disabled="product.stock == 0" @click="product.stock -= 1">Agregar al carrito</button>
+                <button :disabled="product.stock == 0" @click="addToCart">Agregar al carrito</button>
 
             </section>
 
@@ -99,14 +99,39 @@
                         }
                     ],
                     new: true,
-                    offer: true
+                    offer: true,
+                    quantity: 1
                 });
 
                 const activeImage = ref(0);
-
                 const cartOpen = ref(false);
 
                 const cart = ref([]);
+                function addToCart() {
+
+                    const prodIndex = cart.value.findIndex(prod => prod.name == product.value.name);
+
+                    if (prodIndex >= 0)
+                        cart.value[prodIndex].quantity += 1;
+                    else 
+                        cart.value.push(product.value);
+
+                    product.value.stock -= 1;
+
+                }
+
+
+                const discountCodes = ref(["PLATZI20", "RETAXMASTER"]);
+                function applyDiscount(event) {
+
+                    const discountCodeIndex = discountCodes.value.indexOf(event.target.value);
+
+                    if (discountCodeIndex >= 0) {
+                        product.value.price *= 50/100;
+                        discountCodes.value.splice(discountCodeIndex, 1)
+                    }
+
+                }
 
                 setTimeout(() => {
                     activeImage.value = 1;
@@ -116,7 +141,10 @@
                     product,
                     activeImage,
                     cartOpen,
-                    cart
+                    cart,
+
+                    applyDiscount,
+                    addToCart
                 }
 
             },
