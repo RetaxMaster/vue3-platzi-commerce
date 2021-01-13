@@ -29,7 +29,8 @@ app.component("product", {
             <p class="description__status" v-else-if="product.stock == 2">El producto está por terminarse</p>
             <p class="description__status" v-else-if="product.stock == 1">Última unidad disponible</p>
 
-            <p class="description__price">$ {{ new Intl.NumberFormat("es-MX").format(product.price) }}</p>
+            <p class="description__price" :style="{ color: price_color }">$ {{ new Intl.NumberFormat("es-MX").format(product.price) }}</p>
+
             <p class="description__content">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, facere quis animi, amet sequi iste ipsam rerum, necessitatibus tempora obcaecati consequatur maxime sint eos laboriosam veniam maiores voluptatem eum! Eveniet!</p>
 
             <div class="discount">
@@ -50,7 +51,8 @@ app.component("product", {
     setup(props, context) {
 
         const productState = reactive({
-            activeImage: 0
+            activeImage: 0,
+            price_color: "rgb(104, 104, 209)"
         });
 
         const { product } = props;
@@ -72,6 +74,30 @@ app.component("product", {
             }
 
         }
+
+        watch(
+
+            () => productState.activeImage, 
+
+            (val, oldValue) => {
+                console.log(val, oldValue);
+            }
+
+        );
+    
+        watch(
+            
+            () => props.product.stock,
+
+            (stock) => {
+
+                if (stock <= 1) {
+                    productState.price_color = "rgb(188, 30, 67)";
+                }
+
+            }
+        
+        );
 
         return {
 

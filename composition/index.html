@@ -22,6 +22,8 @@
                     <span>{{ product.name }} - $ {{ new Intl.NumberFormat("es-MX").format(product.price) }} {{ product.quantity }}</span>
                 </div>
 
+                <p>Total: $ {{ new Intl.NumberFormat("es-MX").format(total) }}</p>
+
             </div>
 
         </header>
@@ -37,7 +39,7 @@
     <script src="https://unpkg.com/vue@next"></script>
     <script>
 
-        const { createApp, ref, reactive, toRefs } = Vue;
+        const { createApp, ref, reactive, toRefs, watch } = Vue;
 
         const app = createApp({
 
@@ -124,7 +126,8 @@
 
                 const cartState = reactive({
                     cartOpen: false,
-                    cart: []
+                    cart: [],
+                    total: 0
                 });
 
                 function addToCart(product) {
@@ -139,6 +142,20 @@
                     product.stock -= 1;
 
                 }
+
+                watch(
+                    
+                    cartState.cart, 
+                    
+                    (value, oldValue) => {
+                        cartState.total = cartState.cart.reduce((prev, curr) => {
+                            const prevPrice = prev.price || prev;
+                            const prevQuantity = prev.quantity || 1;
+                            return prevPrice * prevQuantity + curr.price * curr.quantity;
+                        }, 0);
+                    }
+
+                );
 
                 return {
                     ...toRefs(cartState),
