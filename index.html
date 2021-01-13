@@ -16,10 +16,17 @@
             <button class="cart">Carro (0)</button>
 
             <div class="cart-content">
+
                 <div class="cart-content__product">
                     <img src="" alt="">
-                    <span>Producto - $ 500.000</span>
+                    <span>{{ product.name }} - $ {{ new Intl.NumberFormat("es-MX").format(product.price) }}</span>
                 </div>
+
+                <div class="cart-content__product">
+                    <img src="" alt="">
+                    <span>{{ product.name }} - $ {{ new Intl.NumberFormat("es-MX").format(product.price) }}</span>
+                </div>
+
             </div>
 
         </header>
@@ -41,11 +48,11 @@
 
             <section class="description">
 
-                <h4>Producto</h4>
+                <h4>{{ product.name.toUpperCase() }} {{ product.stock == 0 ? "😭" : "😎" }}</h4>
                 <span class="badge new">Nuevo</span>
                 <span class="badge offer">Oferta</span>
                 <p class="description__status"></p>
-                <p class="description__price">$ 500.00</p>
+                <p class="description__price">$ {{ new Intl.NumberFormat("es-MX").format(product.price) }}</p>
                 <p class="description__content">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, facere quis animi, amet sequi iste ipsam rerum, necessitatibus tempora obcaecati consequatur maxime sint eos laboriosam veniam maiores voluptatem eum! Eveniet!</p>
 
                 <div class="discount">
@@ -64,7 +71,30 @@
 
         const { createApp } = Vue;
 
-        const app = createApp();
+        const app = createApp({
+
+            data() {
+                return {
+                    product: {
+                        name: "Camara",
+                        price: 450_000,
+                        stock: 5,
+                        content: `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, facere quis animi, amet sequi iste ipsam rerum, necessitatibus tempora obcaecati consequatur maxime sint eos laboriosam veniam maiores voluptatem eum! Eveniet!`,
+                        images: [
+                            {
+                                image: "./images/camara.jpg",
+                                thumbnail: "./images/camara-thumb.jpg"
+                            },
+                            {
+                                image: "./images/camara-2.jpg",
+                                thumbnail: "./images/camara-2-thumb.jpg"
+                            }
+                        ]
+                    }
+                }
+            }
+
+        });
 
         app.mount("#app");
 
