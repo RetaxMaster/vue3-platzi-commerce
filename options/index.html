@@ -13,13 +13,13 @@
         <header>
 
             <h3>PlatziCommerce</h3>
-            <button class="cart" @click="cartOpen = !cartOpen">Carro (0)</button>
+            <button class="cart" @click="cartOpen = !cartOpen">Carro ({{ cart.length }})</button>
 
             <div class="cart-content" v-show="cartOpen">
 
                 <div class="cart-content__product" v-for="(product, index) in cart" :key="product.name" :class="{ 'bg-gray': index & 1 }">
                     <img :src="product.images[0].image" :alt="product.name.toUpperCase()">
-                    <span>{{ product.name }} - $ {{ new Intl.NumberFormat("es-MX").format(product.price) }}</span>
+                    <span>{{ product.name }} - $ {{ new Intl.NumberFormat("es-MX").format(product.price) }} ({{ product.quantity }})</span>
                 </div>
 
             </div>
@@ -63,10 +63,10 @@
                 <div class="discount">
                     <span>Código de Descuento</span>
                     <input type="text" placeholder="Ingresa tu código" 
-                    @keyup.enter="product.price *= 50 / 100">
+                    @keyup.enter="applyDiscount($event)">
                 </div>
 
-                <button :disabled="product.stock == 0" @click="product.stock -= 1">Agregar al carrito</button>
+                <button :disabled="product.stock == 0" @click="addToCart">Agregar al carrito</button>
 
             </section>
 
@@ -99,67 +99,42 @@
                             }
                         ],
                         new: true,
-                        offer: true
+                        offer: true,
+                        quantity: 1
                     },
                     cartOpen: true,
                     activeImage: 0,
-                    cart: [
-                        {
-                            name: "Camara",
-                            price: 450_000,
-                            stock: 5,
-                            content: `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, facere quis animi, amet sequi iste ipsam rerum, necessitatibus tempora obcaecati consequatur maxime sint eos laboriosam veniam maiores voluptatem eum! Eveniet!`,
-                            images: [
-                                {
-                                    image: "./images/camara.jpg",
-                                    thumbnail: "./images/camara-thumb.jpg"
-                                },
-                                {
-                                    image: "./images/camara-2.jpg",
-                                    thumbnail: "./images/camara-2-thumb.jpg"
-                                }
-                            ],
-                            new: true,
-                            offer: true
-                        },
-                        {
-                            name: "Camara PL",
-                            price: 250_000,
-                            stock: 0,
-                            content: `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, facere quis animi, amet sequi iste ipsam rerum, necessitatibus tempora obcaecati consequatur maxime sint eos laboriosam veniam maiores voluptatem eum! Eveniet!`,
-                            images: [
-                                {
-                                    image: "./images/camara.jpg",
-                                    thumbnail: "./images/camara-thumb.jpg"
-                                },
-                                {
-                                    image: "./images/camara-2.jpg",
-                                    thumbnail: "./images/camara-2-thumb.jpg"
-                                }
-                            ],
-                            new: true,
-                            offer: true
-                        },
-                        {
-                            name: "Camara PL2",
-                            price: 350_000,
-                            stock: 0,
-                            content: `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, facere quis animi, amet sequi iste ipsam rerum, necessitatibus tempora obcaecati consequatur maxime sint eos laboriosam veniam maiores voluptatem eum! Eveniet!`,
-                            images: [
-                                {
-                                    image: "./images/camara.jpg",
-                                    thumbnail: "./images/camara-thumb.jpg"
-                                },
-                                {
-                                    image: "./images/camara-2.jpg",
-                                    thumbnail: "./images/camara-2-thumb.jpg"
-                                }
-                            ],
-                            new: true,
-                            offer: true
-                        }
-                    ]
+                    cart: [],
+                    discountCodes: ["PLATZI20", "RETAXMASTER"]
                 }
+            },
+
+            methods: {
+
+                applyDiscount(event) {
+
+                    const discountCodeIndex = this.discountCodes.indexOf(event.target.value);
+
+                    if (discountCodeIndex >= 0) {
+                        this.product.price *= 50/100;
+                        this.discountCodes.splice(discountCodeIndex, 1)
+                    }
+
+                },
+
+                addToCart() {
+
+                    const prodIndex = this.cart.findIndex(prod => prod.name == this.product.name);
+
+                    if (prodIndex >= 0)
+                        this.cart[prodIndex].quantity += 1;
+                    else 
+                        this.cart.push(this.product);
+                    
+                    this.product.stock -= 1;
+
+                }
+
             }
 
         });
