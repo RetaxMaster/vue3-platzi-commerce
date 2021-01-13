@@ -105,6 +105,7 @@
                     },
                     activeImage: 0
                 });
+                const { product } = productState;
 
                 const cartState = reactive({
                     cartOpen: false,
@@ -113,14 +114,14 @@
 
                 function addToCart() {
 
-                    const prodIndex = cartState.cart.findIndex(prod => prod.name == productState.product.name);
+                    const prodIndex = cartState.cart.findIndex(prod => prod.name == product.name);
 
                     if (prodIndex >= 0)
                         cartState.cart[prodIndex].quantity += 1;
                     else 
-                        cartState.cart.push(productState.product);
+                        cartState.cart.push(product);
 
-                    productState.product.stock -= 1;
+                    product.stock -= 1;
 
                 }
 
@@ -131,7 +132,7 @@
                     const discountCodeIndex = discountCodes.value.indexOf(event.target.value);
 
                     if (discountCodeIndex >= 0) {
-                        productState.product.price *= 50/100;
+                        product.price *= 50/100;
                         discountCodes.value.splice(discountCodeIndex, 1)
                     }
 
