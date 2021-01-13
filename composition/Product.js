@@ -42,41 +42,49 @@ app.component("product", {
             <button :disabled="product.stock == 0" @click="addToCart">Agregar al carrito</button>
 
         </section>
-
     `,
 
     props: ["product"],
 
-    data() {
-        return {
-            activeImage: 0,
-            discountCodes: ["PLATZI20", "RETAXMASTER"]
-        }
-    },
+    setup(props) {
 
-    methods: {
+        const productState = reactive({
+            activeImage: 0
+        });
 
-        applyDiscount(event) {
+        const { product } = props;
 
-            const discountCodeIndex = this.discountCodes.indexOf(event.target.value);
+        function addToCart() {
 
-            if (discountCodeIndex >= 0) {
-                this.product.price *= 50/100;
-                this.discountCodes.splice(discountCodeIndex, 1)
-            }
-
-        },
-
-        addToCart() {
-
-            const prodIndex = this.cart.findIndex(prod => prod.name == this.product.name);
+            const prodIndex = cartState.cart.findIndex(prod => prod.name == product.name);
 
             if (prodIndex >= 0)
-                this.cart[prodIndex].quantity += 1;
+                cartState.cart[prodIndex].quantity += 1;
             else 
-                this.cart.push(this.product);
-            
-            this.product.stock -= 1;
+                cartState.cart.push(product);
+
+            product.stock -= 1;
+
+        }
+
+        const discountCodes = ref(["PLATZI20", "RETAXMASTER"]);
+        function applyDiscount(event) {
+
+            const discountCodeIndex = discountCodes.value.indexOf(event.target.value);
+
+            if (discountCodeIndex >= 0) {
+                product.price *= 50/100;
+                discountCodes.value.splice(discountCodeIndex, 1)
+            }
+
+        }
+
+        return {
+
+            ...toRefs(productState),
+
+            addToCart,
+            applyDiscount
 
         }
 
