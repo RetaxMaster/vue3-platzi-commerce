@@ -28,9 +28,13 @@
 
         </header>
 
+        <div class="input-container">
+            <input type="text" v-model="search" @keypress.enter="searchProducts">
+        </div>
+
         <main>
 
-            <product v-for="product in products" :key="product.name" :product="product" @sendtocart="addToCart($event)"></product>
+            <product v-for="product in allProducts" :key="product.name" :product="product" @sendtocart="addToCart($event)"></product>
 
         </main>
         
@@ -59,6 +63,24 @@
                         }, 0);
 
                     })
+                });
+
+                const search = ref("");
+
+                function searchProducts() {
+                    fetch("https://my-json-server.typicode.com/iosamuel/demo/products")
+                    .then(res => res.json())
+                    .then(data => {
+
+                        products.value = data.filter(
+                            result => search.value == "" || result.name.toLowerCase() == search.value.toLowerCase()
+                        );
+
+                    });
+                }
+
+                const allProducts = computed(() => {
+                    return products.value;
                 });
 
                 /* const total = computed(() => {
@@ -113,6 +135,9 @@
                     ...toRefs(cartState),
                     products,
                     addToCart,
+                    search,
+                    allProducts,
+                    searchProducts
                 }
 
             },

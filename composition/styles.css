@@ -154,3 +154,12 @@ main .description button:disabled {
 .badge.offer {
     background-color: rgb(197, 107, 33);
 }
+
+.input-container {
+    padding: 17px;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 10px;
+}
