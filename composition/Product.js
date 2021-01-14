@@ -52,10 +52,23 @@ app.component("product", {
 
         const productState = reactive({
             activeImage: 0,
-            price_color: "rgb(104, 104, 209)"
+            // price_color: "rgb(104, 104, 209)",
+            price_color: computed(() => 
+                props.product.stock <= 1 ? "rgb(188, 30, 67)" : "rgb(104, 104, 209)"
+            ),
+    
         });
 
         const { product } = props;
+
+        /* const price_color = computed(() => {
+
+            if (props.product.stock <= 1)
+                return "rgb(188, 30, 67)";
+
+            return "rgb(104, 104, 209)";
+
+        }); */
 
         function sendToCart() {
             
@@ -85,7 +98,7 @@ app.component("product", {
 
         );
     
-        watch(
+        /* watch(
             
             () => props.product.stock,
 
@@ -98,7 +111,7 @@ app.component("product", {
             }
         
         );
-
+ */
         return {
 
             ...toRefs(productState),

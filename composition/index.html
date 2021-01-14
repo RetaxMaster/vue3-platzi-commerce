@@ -39,7 +39,7 @@
     <script src="https://unpkg.com/vue@next"></script>
     <script>
 
-        const { createApp, ref, reactive, toRefs, watch } = Vue;
+        const { createApp, ref, reactive, toRefs, watch, computed } = Vue;
 
         const app = createApp({
 
@@ -127,8 +127,26 @@
                 const cartState = reactive({
                     cartOpen: false,
                     cart: [],
-                    total: 0
+                    total: computed(() => {
+
+                        return cartState.cart.reduce((prev, curr) => {
+                            const prevPrice = prev.price || prev;
+                            const prevQuantity = prev.quantity || 1;
+                            return prevPrice * prevQuantity + curr.price * curr.quantity;
+                        }, 0);
+
+                    })
                 });
+
+                /* const total = computed(() => {
+
+                    return cartState.cart.reduce((prev, curr) => {
+                        const prevPrice = prev.price || prev;
+                        const prevQuantity = prev.quantity || 1;
+                        return prevPrice * prevQuantity + curr.price * curr.quantity;
+                    }, 0);
+
+                }); */
 
                 function addToCart(product) {
 
@@ -143,7 +161,7 @@
 
                 }
 
-                watch(
+                /* watch(
                     
                     cartState.cart, 
                     
@@ -155,12 +173,12 @@
                         }, 0);
                     }
 
-                );
+                ); */
 
                 return {
                     ...toRefs(cartState),
                     products,
-                    addToCart
+                    addToCart,
                 }
 
             },
